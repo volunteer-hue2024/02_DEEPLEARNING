@@ -1,5 +1,5 @@
 # station_02_DL
-Deep Learning : unlike in ML here a single architecture inspired from human brain (neural n/w) is used for many purposes
+Deep Learning : Unlike in ML here it is a single architecture, inspired from human brain (neural n/w) which is used for many purposes.<br>
 Single neurons : (Perceptrons) Key Aspects 
 
     Neuroplasticity: It involves synaptic reorganization, where connections between neurons become stronger or weaker based on usage.
@@ -13,7 +13,7 @@ Single neurons : (Perceptrons) Key Aspects
     Activation layer decides what data has to be sent to the next layer.
     when the input is just one feature it is in effect an equation of line..where weight is the slope and bias is the intercept.The nucleous or the brain can have many kinds of functions,each giving differnt output threshold
 
-If Multiple Neurons:- This is a neural network
+If Multiple Neurons:- It is called a neural network
 
 Say an image is fed as input.It is known to have a shape of 60,000 ,128,128 meaning the input nodes will be 128*128 in count.
 An optimizer decides how the weights should be reconfigured.
@@ -31,5 +31,7 @@ Batch Size : if batch_size is 1 , for 60000 images the weights will be updated 6
 If batch_size is 6000 ,the weights will be updated 10 times
 **Batch size in deep learning is
 a hyperparameter defining the number of training samples processed in one forward/backward pass before updating model weights**
+
+ImageNet is a dataset 
 
   .
