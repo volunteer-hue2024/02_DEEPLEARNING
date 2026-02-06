@@ -34,23 +34,21 @@ Say a neural network has  3 input nodes and 2 hidden layers of 6 neurons each . 
        
 What are the possible activation functions at a neuron?
 
-    ### 🚀 Activation Functions 
-    
-    | Function | Mathematical Formula | Output Range | Ideal Use Case |
-    | :--- | :---: | :---: | :--- |
-    | **Linear** | $f(x) = x$ | $(-\infty, \infty)$ | Regression Output |
-    | **Sigmoid** | $f(x) = \frac{1}{1 + e^{-x}}$ | $(0, 1)$ | Binary Classification |
-    | **Tanh** | $f(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$ | $(-1, 1)$ | Hidden Layers (Zero-centered) |
-    | **ReLU** | $f(x) = \max(0, x)$ | $[0, \infty)$ | Standard Hidden Layers |
-    | **Leaky ReLU** | $f(x) = \max(\alpha x, x)$ | $(-\infty, \infty)$ | Fixing "Dead Neurons" |
-    | **ELU** | $f(x) = \begin{cases} x & x > 0 \\ \alpha(e^x - 1) & x \le 0 \end{cases}$ | $(-\alpha, \infty)$ | Improved mean activations |
-    | **GELU** | $f(x) = x\Phi(x)$ | $\approx [-0.17, \infty)$ | Transformers & LLMs |
-    | **Softmax** | $\sigma(\mathbf{z})_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}}$ | $(0, 1)$ | Multi-class Classification |
-    
+               ### 🧠 Activation Functions Reference
 
-IMAGEs on neural network(Multiple Neurons):
+| Function | Formula | Output Range | Common Use Case |
+| :--- | :--- | :--- | :--- |
+| **Linear** | $f(x) = x$ | $(-\infty, \infty)$ | Regression output layers |
+| **Sigmoid** | $f(x) = \frac{1}{1 + e^{-x}}$ | $(0, 1)$ | Binary Classification |
+| **Tanh** | $f(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$ | $(-1, 1)$ | Hidden layers (Zero-centered) |
+| **ReLU** | $f(x) = \max(0, x)$ | $[0, \infty)$ | Standard for hidden layers |
+| **Leaky ReLU** | $f(x) = \max(\alpha x, x)$ | $(-\infty, \infty)$ | Prevents "Dead Neuron" problem |
+| **GELU** | $f(x) = x \Phi(x)$ | $\approx [-0.17, \infty)$ | Transformers (GPT, BERT) |
+| **Softmax** | $\sigma(\mathbf{z})_i = \frac{e^{z_i}}{\sum e^{z_j}}$ | $(0, 1)$ | Multi-class Classification |
 
-    Say an image is fed as input.It is known to have a shape of  128X128 meaning the 784 pixels .So they are flattened and 784 nodes form the input
+HOW ARE IMAGEs PROCESSED on neural network(Multiple Neurons):
+
+    Say an image is fed as input.It is known to have a shape of  128X128 meaning it has 784 pixels .So they are flattened and 784 nodes form the input.
 
 as **SKLEARN** IS FOR ML,**KERAS** HELPS FOR DL
 
@@ -61,19 +59,90 @@ Decide on the layers.Compile them.
 An optimizer decides how the weights should be reconfigured.
 Model building is done.
 
-NEXT WE TRAIN THE MODEL.
+Code 
+
+               import numpy as np
+               import pandas as pd
+               import tensorflow as tf
+               from tensorflow import keras
+               import matplotlib.pyplot as plt
+               import plotly.graph_objects as go
+               from plotly.subplots import make_subplots
+               
+               # Load Dataset
+               (train_images, train_labels), (test_images, test_labels) = keras.datasets.fashion_mnist.load_data()
+               
+               # Normalize Data
+               train_images = train_images / 255.0
+               test_images = test_images / 255.0
+               
+               # Reshape Data
+               train_images = train_images.reshape((train_images.shape[0], 28, 28, 1))
+               test_images = test_images.reshape((test_images.shape[0], 28, 28, 1))
+               
+               # One-Hot Encode Labels
+               train_labels_one_hot = keras.utils.to_categorical(train_labels, num_classes=10)
+               test_labels_one_hot = keras.utils.to_categorical(test_labels, num_classes=10)
+               
+               # Verify Dataset Shapes
+               print("Training images shape:", train_images.shape)
+               print("Testing images shape:", test_images.shape)
+               print("Training labels shape:", train_labels_one_hot.shape)
+               print("Testing labels shape:", test_labels_one_hot.shape)
+               
+               # Basic ANN Model
+               ann_model = keras.Sequential([
+                   keras.layers.Flatten(input_shape=(28, 28, 1)),
+                   keras.layers.Dense(128, activation='relu'),
+                   keras.layers.Dense(64, activation='relu'),
+                   keras.layers.Dense(10, activation='softmax')
+               ])
+               
+               ann_model.compile(optimizer='adam',
+                                 loss='categorical_crossentropy',
+                                 metrics=['accuracy'])
+               
+               ann_model.summary()
+               
+               
+### 📉 Loss Functions Reference
+
+| Category | Loss Function | Mathematical Formula | Key Use Case |
+| :--- | :--- | :--- | :--- |
+| **Regression** | **MSE** (Mean Squared Error) | $L = \frac{1}{n} \sum (y_i - \hat{y}_i)^2$ | Predicting continuous values (House prices, Temp). |
+| **Regression** | **MAE** (Mean Absolute Error) | $L = \frac{1}{n} \sum \vert y_i - \hat{y}_i \vert$ | Regression robust to outliers. |
+| **Binary Class** | **Binary Cross-Entropy** | $L = -[y \log(\hat{y}) + (1-y) \log(1-\hat{y})]$ | Two-choice classification (Spam vs. Not Spam). |
+| **Multi-Class** | **Categorical Cross-Entropy** | $L = -\sum y_i \log(\hat{y}_i)$ | Multi-class (Dog vs. Cat vs. Bird) with One-Hot labels. |
+| **Multi-Class** | **Sparse Categorical CE** | $L = -\sum y_i \log(\hat{y}_i)$ | Same as above, but uses integer labels (0, 1, 2...). |
+| **Ranking/Embedding**| **Hinge Loss** | $L = \max(0, 1 - y \cdot \hat{y})$ | Support Vector Machines (SVM) and some GANs. |
+| **Advanced** | **Huber Loss** | Combination of MSE and MAE | Robust regression that handles outliers gracefully. |
+
+What is Entropy?
+
+Entropy is a measure of the uncertainty or randomness in a dataset.
+
+    The Concept: If a result is certain (e.g., a biased coin that always lands heads), the entropy is 0. 
+    If a result is completely unpredictable (e.g., a fair 6-sided die), the entropy is high.
+
+Cross-Entropy
+        
+        Cross-Entropy measures the difference between two probability distributions:the True distribution (P) and the Predicted distribution (Q).
 
 What is an epoch?
-One iteration of the whole data..each epoch going on means the training is going on.
-Each epoch shows the accuracy,loss,validation accuracy and validation loss.
 
-If the same model is executed over again ,the model will start from where it was left.(since the model is not rebuilt.)
-Weights are turning better each time.
-Batch Size : if batch_size is 1 , for 60000 images the weights will be updated 60000 times.
-If batch_size is 6000 ,the weights will be updated 10 times
-**Batch size in deep learning is
-a hyperparameter defining the number of training samples processed in one forward/backward pass before updating model weights**
-
+     One iteration of the whole data..each epoch going on means the training is going on.
+     Each epoch shows the accuracy,loss,validation accuracy and validation loss.
+     
+     If the same model is executed over again ,the model will start from where it was left.(since the model is not rebuilt.)
+     Weights are turning better each time.
+     
+What is Batch Size?
+          
+          : if batch_size is 1 , for 60000 images the weights will be updated 60000 times.
+          If batch_size is 6000 ,the weights will be updated 10 times
+          **Batch size in deep learning is
+          a hyperparameter defining the number of training samples processed in one forward/backward pass before updating model weights**
+          
 ImageNet is a dataset 
 
   .
